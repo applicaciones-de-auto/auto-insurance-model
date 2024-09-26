@@ -9,7 +9,6 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -28,12 +27,15 @@ import org.json.simple.JSONObject;
  *
  * @author Arsiela
  */
-public class Model_Insurance_Policy_Proposal implements GEntity{
-final String XML = "Model_Insurance_Policy_Proposal.xml";
+public class Model_Insurance_Policy_Application implements GEntity{
+final String XML = "Model_Insurance_Policy_Application.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"; //»
-
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
+                                + "»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
+                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPacCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
+                                + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName"; //»
+    
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
     JSONObject poJSON;              //json container
@@ -44,7 +46,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      *
      * @param foValue - GhostRider Application Driver
      */
-    public Model_Insurance_Policy_Proposal(GRider foValue) {
+    public Model_Insurance_Policy_Application(GRider foValue) {
         if (foValue == null) {
             System.err.println("Application Driver is not set.");
             System.exit(1);
@@ -65,7 +67,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             MiscUtil.initRowSet(poEntity);        
             poEntity.updateObject("dTransact", poGRider.getServerDate()); 
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
-            poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+            poEntity.updateObject("dPropslDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);
             poEntity.updateDouble("nAONCRate", 0.00);
             poEntity.updateDouble("nTaxRatex", 0.00);
@@ -147,7 +149,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
 
     @Override
     public String getTable() {
-        return "insurance_policy_proposal";
+        return "insurance_policy_application";
     }
     
     /**
@@ -243,7 +245,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
         pnEditMode = EditMode.ADDNEW;
 
         //replace with the primary key column info
-        setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
+        setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()+"PA"));
         setTransactDte(poGRider.getServerDate());
         
         poJSON = new JSONObject();
@@ -305,7 +307,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             String lsSQL; 
             if (pnEditMode == EditMode.ADDNEW) {
                 //replace with the primary key column info
-                setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
+                setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()+"PA"));
                 setEntryBy(poGRider.getUserID());
                 setEntryDte(poGRider.getServerDate());
                 setModifiedBy(poGRider.getUserID());
@@ -327,7 +329,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                     poJSON.put("message", "No record to save.");
                 }
             } else {
-                Model_Insurance_Policy_Proposal loOldEntity = new Model_Insurance_Policy_Proposal(poGRider);
+                Model_Insurance_Policy_Application loOldEntity = new Model_Insurance_Policy_Application(poGRider);
                 
                 //replace with the primary key column info
                 JSONObject loJSON = loOldEntity.openRecord(this.getTransNo());
@@ -429,76 +431,89 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     }
     
     public String getSQL(){
-        return    " SELECT "                                                                           
-                + "    a.sTransNox "                                                                   
-                + "  , a.dTransact "                                                                   
-                + "  , a.sReferNox "                                                                   
-                + "  , a.sClientID "                                                                   
-                + "  , a.sSerialID "                                                                   
-                + "  , a.sVSPNoxxx "                                                                   
-                + "  , a.sBrInsIDx "                                                                   
-                + "  , a.sInsTypID "                                                                   
-                + "  , a.cIsNewxxx "                                                                   
-                + "  , a.nODTCAmtx "                                                                   
-                + "  , a.nODTCRate "                                                                   
-                + "  , a.nODTCPrem "                                                                   
-                + "  , a.nAONCAmtx "                                                                   
-                + "  , a.nAONCRate "                                                                   
-                + "  , a.nAONCPrem "                                                                   
-                + "  , a.cAONCPayM "                                                                   
-                + "  , a.nBdyCAmtx "                                                                   
-                + "  , a.nBdyCPrem "                                                                   
-                + "  , a.nPrDCAmtx "                                                                   
-                + "  , a.nPrDCPrem "                                                                   
-                + "  , a.nPAcCAmtx "                                                                   
-                + "  , a.nPacCPrem "                                                                   
-                + "  , a.nTPLAmtxx "                                                                   
-                + "  , a.nTPLPremx "                                                                   
-                + "  , a.nTaxRatex "                                                                   
-                + "  , a.nTaxAmtxx "                                                                   
-                + "  , a.nTotalAmt "                                                                   
-                + "  , a.sRemarksx "                                                                   
-                + "  , a.cTranStat "                                                                   
-                + "  , a.sModified "                                                                   
-                + "  , a.dModified "                                                                   
-                + "  , a.sApproved "                                                                   
-                + "  , a.dApproved "  
-                + "  , CASE "          
-                + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CLOSED)+" THEN 'APPROVE' "                     
-                + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)+" THEN 'CANCELLED' "                  
-                + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_OPEN)+" THEN 'ACTIVE' "                    
-                + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_POSTED)+" THEN 'POSTED' "                                      
-                + " 	ELSE 'ACTIVE'  "                                                          
-                + "    END AS sTranStat "
-                + "  , b.sCompnyNm AS sOwnrNmxx "                                                      
-                + "  , b.cClientTp "                                                                   
-                + "  , IFNULL(CONCAT( IFNULL(CONCAT(d.sHouseNox,' ') , ''), "                          
-                + "    IFNULL(CONCAT(d.sAddressx,' ') , ''), "                                         
-                + "    IFNULL(CONCAT(e.sBrgyName,' '), ''),  "                                         
-                + "    IFNULL(CONCAT(f.sTownName, ', '),''), "                                         
-                + "    IFNULL(CONCAT(g.sProvName),'') )	, '') AS sAddressx "                           
-                + "  , k.sCompnyNm AS sCoOwnrNm "                                                      
-                + "  , h.sCSNoxxxx "                                                                   
-                + "  , h.sFrameNox "                                                                   
-                + "  , h.sEngineNo "                                                                   
-                + "  , h.cVhclNewx "                                                                   
-                + "  , i.sPlateNox "                                                                   
-                + "  , j.sDescript AS sVhclFDsc "                                                      
-                + "  , l.sBrInsNme "                                                                   
-                + "  , m.sInsurNme "                                                                   
-                + " FROM insurance_policy_proposal a "                                                 
-                + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
-                + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
-                + " LEFT JOIN addresses d ON d.sAddrssID = c.sAddrssID "                               
-                + " LEFT JOIN barangay e ON e.sBrgyIDxx = d.sBrgyIDxx  "                               
-                + " LEFT JOIN towncity f ON f.sTownIDxx = d.sTownIDxx  "                               
-                + " LEFT JOIN province g ON g.sProvIDxx = f.sProvIDxx  "                               
-                + " LEFT JOIN vehicle_serial h ON h.sSerialID = a.sSerialID "                          
-                + " LEFT JOIN vehicle_serial_registration i ON i.sSerialID = a.sSerialID "             
-                + " LEFT JOIN vehicle_master j ON j.sVhclIDxx = h.sVhclIDxx "                          
-                + " LEFT JOIN client_master k ON k.sClientID = h.sCoCltIDx " /*co-owner*/              
-                + " LEFT JOIN insurance_company_branches l ON l.sBrInsIDx = a.sBrInsIDx "              
-                + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "  ;                          
+        return        " SELECT "                                                                                             
+                    + "    a.sTransNox "                                                                                     
+                    + "  , a.dTransact "                                                                                     
+                    + "  , a.sReferNox "                                                                                     
+                    + "  , a.dValidFrm "                                                                                     
+                    + "  , a.dValidTru "                                                                                     
+                    + "  , a.cFinTypex "                                                                                     
+                    + "  , a.sBrBankID "                                                                                     
+                    + "  , a.sEmployID "                                                                                     
+                    + "  , a.cTranStat "                                                                                     
+                    + "  , a.sModified "                                                                                     
+                    + "  , a.dModified "                                                                                     
+                    + "  , CASE "                                                                                            
+                    + "  WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CLOSED)+" THEN 'APPROVE' "               
+                    + "  WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)+" THEN 'CANCELLED' "          
+                    + "  WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_OPEN)+" THEN 'ACTIVE' "                  
+                    + "  WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_POSTED)+" THEN 'POSTED' "                
+                    + "  ELSE 'ACTIVE' "                                                                                     
+                    + "    END AS sTranStat "                                                                                
+                     /*POLICY PROPOSAL*/                                                                                     
+                    + " , b.dTransact AS dPropslDt"                                                                                      
+                    + " , b.sReferNox AS sPropslNo "                                                                         
+                    + " , b.sClientID "                                                                                      
+                    + " , b.sSerialID "                                                                       
+                    + " , b.sVSPNoxxx AS sVSPTrnNo "                                                                                       
+                    + " , b.sBrInsIDx "                                                                                      
+                    + " , b.sInsTypID "                                                                                      
+                    + " , b.cIsNewxxx "                                                                                      
+                    + " , b.nODTCAmtx "                                                                                      
+                    + " , b.nODTCRate "                                                                                      
+                    + " , b.nODTCPrem "                                                                                      
+                    + " , b.nAONCAmtx "                                                                                      
+                    + " , b.nAONCRate "                                                                                      
+                    + " , b.nAONCPrem "                                                                                      
+                    + " , b.cAONCPayM "                                                                                      
+                    + " , b.nBdyCAmtx "                                                                                      
+                    + " , b.nBdyCPrem "                                                                                      
+                    + " , b.nPrDCAmtx "                                                                                      
+                    + " , b.nPrDCPrem "                                                                                      
+                    + " , b.nPAcCAmtx "                                                                                      
+                    + " , b.nPacCPrem "                                                                                      
+                    + " , b.nTPLAmtxx "                                                                                      
+                    + " , b.nTPLPremx "                                                                                      
+                    + " , b.nTaxRatex "                                                                                      
+                    + " , b.nTaxAmtxx "                                                                                      
+                    + " , b.nTotalAmt "                                                                                      
+                     /*CLIENT INFO */                                                                                        
+                    + " , c.sCompnyNm AS sOwnrNmxx "                                                                         
+                    + " , c.cClientTp "                                                                                      
+                    + " , IFNULL(CONCAT( IFNULL(CONCAT(e.sHouseNox,' ') , ''), "                                             
+                    + "   IFNULL(CONCAT(e.sAddressx,' ') , ''),  "                                                           
+                    + "   IFNULL(CONCAT(f.sBrgyName,' '), ''),   "                                                           
+                    + "   IFNULL(CONCAT(g.sTownName, ', '),''),  "                                                           
+                    + "   IFNULL(CONCAT(h.sProvName),'') )	, '') AS sAddressx "                                             
+                    + " , l.sCompnyNm AS sCoOwnrNm "                                                                         
+                    + " , i.sCSNoxxxx "                                                                                      
+                    + " , i.sFrameNox "                                                                                      
+                    + " , i.sEngineNo "                                                                                      
+                    + " , i.cVhclNewx "                                                                                      
+                    + " , j.sPlateNox "                                                                                      
+                    + " , k.sDescript AS sVhclFDsc "                                                                         
+                    + " , m.sBrInsNme "                                                                                      
+                    + " , n.sInsurNme "
+                    + " , o.sCompnyNm AS sEmpNamex "
+                    + " , p.sBrBankNm "
+                    + " , q.sBankName "                                                                                      
+                    + " FROM insurance_policy_application a "                                                                 
+                    + " LEFT JOIN insurance_policy_proposal b ON b.sTransNox = a.sReferNox "                                  
+                    + " LEFT JOIN client_master c ON c.sClientID = b.sClientID "  /*owner*/                                   
+                    + " LEFT JOIN client_address d ON d.sClientID = b.sClientID AND d.cPrimaryx = '1' "                       
+                    + " LEFT JOIN addresses e ON e.sAddrssID = d.sAddrssID "                                                  
+                    + " LEFT JOIN barangay f ON f.sBrgyIDxx = e.sBrgyIDxx  "                                                  
+                    + " LEFT JOIN towncity g ON g.sTownIDxx = e.sTownIDxx  "                                                  
+                    + " LEFT JOIN province h ON h.sProvIDxx = g.sProvIDxx  "                                                  
+                    + " LEFT JOIN vehicle_serial i ON i.sSerialID = b.sSerialID "                                             
+                    + " LEFT JOIN vehicle_serial_registration j ON j.sSerialID = b.sSerialID "                                
+                    + " LEFT JOIN vehicle_master k ON k.sVhclIDxx = i.sVhclIDxx "                                             
+                    + " LEFT JOIN client_master l ON l.sClientID = i.sCoCltIDx  " /*co-owner*/                                
+                    + " LEFT JOIN insurance_company_branches m ON m.sBrInsIDx = b.sBrInsIDx  "                                
+                    + " LEFT JOIN insurance_company n ON n.sInsurIDx = m.sInsurIDx " 
+                    + " LEFT JOIN ggc_isysdbf.client_master o ON o.sClientID = a.sEmployID " 
+                    + " LEFT JOIN banks_branches p ON p.sBrBankID = a.sBrBankID  "                     
+                    + " LEFT JOIN banks q ON q.sBankIDxx = p.sBankIDxx " ;                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -577,6 +592,212 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     /**
      * Description: Sets the Value of this record.
      *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setValidFrmDte(Date fdValue) {
+        JSONObject loJSON = new JSONObject();
+//        if (!(fdValue instanceof java.sql.Date) && !(fdValue instanceof Date)) {
+//          loJSON.put("result", "error");
+//          loJSON.put("message", "Value must be a date object.");
+//          return loJSON;
+//        } 
+//        loJSON.put("result", "success");
+//        loJSON.put("message", "Value is valid for this field.");
+        return setValue("dValidFrm", fdValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Date getValidFrmDte() {
+        Date date = null;
+//        if(!getValue("dValidFrm").toString().isEmpty()){
+//            date = CommonUtils.toDate(getValue("dValidFrm").toString());
+//        }
+//        
+        if(getValue("dValidFrm") == null || getValue("dValidFrm").equals("")){
+            date = SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE);
+        } else {
+            date = SQLUtil.toDate(xsDateShort((Date) getValue("dValidFrm")), SQLUtil.FORMAT_SHORT_DATE);
+        }
+            
+        return date;
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setFinType(String fsValue) {
+        return setValue("cFinTypex", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getFinType() {
+        return (String) getValue("cFinTypex");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBrBankID(String fsValue) {
+        return setValue("sBrBankID", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBrBankID() {
+        return (String) getValue("sBrBankID");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setEmployID(String fsValue) {
+        return setValue("sEmployID", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getEmployID() {
+        return (String) getValue("sEmployID");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setTranStat(String fsValue) {
+        return setValue("cTranStat", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getTranStat() {
+        return (String) getValue("cTranStat");
+    }
+    
+//    /**
+//     * Sets record as active.
+//     *
+//     * @param fbValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setActive(boolean fbValue) {
+//        return setValue("cTranStat", fbValue ? "1" : "0");
+//    }
+//
+//    /**
+//     * @return If record is active.
+//     */
+//    public boolean isActive() {
+//        return ((String) getValue("cTranStat")).equals("1");
+//    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setEntryBy(String fsValue) {
+        return setValue("sEntryByx", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getEntryBy() {
+        return (String) getValue("sEntryByx");
+    }
+    
+    /**
+     * Sets the date and time the record was modified.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setEntryDte(Date fdValue) {
+        return setValue("dEntryDte", fdValue);
+    }
+
+    /**
+     * @return The date and time the record was modified.
+     */
+    public Date getEntryDte() {
+        return (Date) getValue("dEntryDte");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setModifiedBy(String fsValue) {
+        return setValue("sModified", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getModifiedBy() {
+        return (String) getValue("sModified");
+    }
+    
+    /**
+     * Sets the date and time the record was modified.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setModifiedDte(Date fdValue) {
+        return setValue("dModified", fdValue);
+    }
+
+    /**
+     * @return The date and time the record was modified.
+     */
+    public Date getModifiedDte() {
+        return (Date) getValue("dModified");
+    }
+    
+//    /**
+//     * Description: Sets the Value of this record.
+//     *
+//     * @param fsValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setTranStatus(String fsValue) {
+//        return setValue("sTranStat", fsValue);
+//    }
+//
+//    /**
+//     * @return The Value of this record.
+//     */
+//    public String getTranStatus() {
+//        return (String) getValue("sTranStat");
+//    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
      * @param fsValue
      * @return result as success/failed
      */
@@ -614,15 +835,15 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      * @param fsValue
      * @return result as success/failed
      */
-    public JSONObject setVSPNo(String fsValue) {
-        return setValue("sVSPNoxxx", fsValue);
+    public JSONObject setVSPTrnNo(String fsValue) {
+        return setValue("sVSPTrnNo", fsValue);
     }
 
     /**
      * @return The Value of this record.
      */
-    public String getVSPNo() {
-        return (String) getValue("sVSPNoxxx");
+    public String getVSPTrnNo() {
+        return (String) getValue("sVSPTrnNo");
     }
     
     /**
@@ -674,23 +895,6 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public String getIsNew() {
         return (String) getValue("cIsNewxxx");
-    }
-    
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setRemarks(String fsValue) {
-        return setValue("sRemarksx", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getRemarks() {
-        return (String) getValue("sRemarksx");
     }
     
     /**
@@ -1064,143 +1268,6 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      * @param fsValue
      * @return result as success/failed
      */
-    public JSONObject setTranStat(String fsValue) {
-        return setValue("cTranStat", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getTranStat() {
-        return (String) getValue("cTranStat");
-    }
-    
-//    /**
-//     * Sets record as active.
-//     *
-//     * @param fbValue
-//     * @return result as success/failed
-//     */
-//    public JSONObject setActive(boolean fbValue) {
-//        return setValue("cTranStat", fbValue ? "1" : "0");
-//    }
-//
-//    /**
-//     * @return If record is active.
-//     */
-//    public boolean isActive() {
-//        return ((String) getValue("cTranStat")).equals("1");
-//    }
-    
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setEntryBy(String fsValue) {
-        return setValue("sEntryByx", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getEntryBy() {
-        return (String) getValue("sEntryByx");
-    }
-    
-    /**
-     * Sets the date and time the record was modified.
-     *
-     * @param fdValue
-     * @return result as success/failed
-     */
-    public JSONObject setEntryDte(Date fdValue) {
-        return setValue("dEntryDte", fdValue);
-    }
-
-    /**
-     * @return The date and time the record was modified.
-     */
-    public Date getEntryDte() {
-        return (Date) getValue("dEntryDte");
-    }
-    
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setModifiedBy(String fsValue) {
-        return setValue("sModified", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getModifiedBy() {
-        return (String) getValue("sModified");
-    }
-    
-    /**
-     * Sets the date and time the record was modified.
-     *
-     * @param fdValue
-     * @return result as success/failed
-     */
-    public JSONObject setModifiedDte(Date fdValue) {
-        return setValue("dModified", fdValue);
-    }
-
-    /**
-     * @return The date and time the record was modified.
-     */
-    public Date getModifiedDte() {
-        return (Date) getValue("dModified");
-    }
-    
-    
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedBy(String fsValue) {
-        return setValue("sApproved", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getApprovedBy() {
-        return (String) getValue("sApproved");
-    }
-    
-    /**
-     * Sets the date and time the record was modified.
-     *
-     * @param fdValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedDte(Date fdValue) {
-        return setValue("dApproved", fdValue);
-    }
-
-    /**
-     * @return The date and time the record was modified.
-     */
-    public Date getApprovedDte() {
-        return (Date) getValue("dApproved");
-    }
-    
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
     public JSONObject setOwnrNm(String fsValue) {
         return setValue("sOwnrNmxx", fsValue);
     }
@@ -1398,4 +1465,55 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     public String getInsurNme() {
         return (String) getValue("sInsurNme");
     }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setEmpName(String fsValue) {
+        return setValue("sEmpNamex", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getEmpName() {
+        return (String) getValue("sEmpNamex");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBrBankNm(String fsValue) {
+        return setValue("sBrBankNm", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBrBankNm() {
+        return (String) getValue("sBrBankNm");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBankName(String fsValue) {
+        return setValue("sBankName", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBankName() {
+        return (String) getValue("sBankName");
+    } 
 }
