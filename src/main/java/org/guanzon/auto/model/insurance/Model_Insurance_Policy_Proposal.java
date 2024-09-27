@@ -32,7 +32,7 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -192,6 +192,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     @Override
     public JSONObject setValue(int fnColumn, Object foValue) {
         try {
+            System.out.println(MiscUtil.getColumnLabel(poEntity, fnColumn));
             poJSON = MiscUtil.validateColumnValue(System.getProperty("sys.default.path.metadata") + XML, MiscUtil.getColumnLabel(poEntity, fnColumn), foValue);
             if ("error".equals((String) poJSON.get("result"))) {
                 return poJSON;
@@ -606,6 +607,23 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public String getClientID() {
         return (String) getValue("sClientID");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setVSPTranNo(String fsValue) {
+        return setValue("sVSPNoxxx", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVSPTranNo() {
+        return (String) getValue("sVSPNoxxx");
     }
     
     /**
