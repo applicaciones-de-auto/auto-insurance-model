@@ -626,22 +626,22 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
         return (String) getValue("sVSPNoxxx");
     }
     
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setVSPNo(String fsValue) {
-        return setValue("sVSPNoxxx", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getVSPNo() {
-        return (String) getValue("sVSPNoxxx");
-    }
+//    /**
+//     * Description: Sets the Value of this record.
+//     *
+//     * @param fsValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setVSPNo(String fsValue) {
+//        return setValue("sVSPNoxxx", fsValue);
+//    }
+//
+//    /**
+//     * @return The Value of this record.
+//     */
+//    public String getVSPNo() {
+//        return (String) getValue("sVSPNoxxx");
+//    }
     
     /**
      * Description: Sets the Value of this record.
