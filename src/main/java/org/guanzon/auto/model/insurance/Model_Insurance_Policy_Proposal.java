@@ -32,7 +32,7 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -64,6 +64,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
 
             MiscUtil.initRowSet(poEntity);        
             poEntity.updateObject("dTransact", poGRider.getServerDate()); 
+            poEntity.updateObject("dDelvryDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE)); 
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
             poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);
@@ -452,7 +453,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , a.nPrDCAmtx "                                                                   
                 + "  , a.nPrDCPrem "                                                                   
                 + "  , a.nPAcCAmtx "                                                                   
-                + "  , a.nPacCPrem "                                                                   
+                + "  , a.nPAcCPrem "                                                                   
                 + "  , a.nTPLAmtxx "                                                                   
                 + "  , a.nTPLPremx "                                                                   
                 + "  , a.nTaxRatex "                                                                   
@@ -486,7 +487,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , i.sPlateNox "                                                                   
                 + "  , j.sDescript AS sVhclFDsc "                                                      
                 + "  , l.sBrInsNme "                                                                   
-                + "  , m.sInsurNme "                                                                   
+                + "  , m.sInsurNme "                                                                
+                + "  , DATE(n.dDelvryDt) AS dDelvryDt"                                                                 
+                + "  , n.nUnitPrce "                                                                  
                 + " FROM insurance_policy_proposal a "                                                 
                 + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
                 + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
@@ -499,7 +502,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + " LEFT JOIN vehicle_master j ON j.sVhclIDxx = h.sVhclIDxx "                          
                 + " LEFT JOIN client_master k ON k.sClientID = h.sCoCltIDx " /*co-owner*/              
                 + " LEFT JOIN insurance_company_branches l ON l.sBrInsIDx = a.sBrInsIDx "              
-                + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "  ;                          
+                + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "             
+                + " LEFT JOIN vsp_master n ON n.sTransNox = a.sVSPNoxxx " ;                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -959,18 +963,18 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      * @param fdbValue
      * @return result as success/failed
      */
-    public JSONObject setPacCPrem(BigDecimal fdbValue) {
-        return setValue("nPacCPrem", fdbValue);
+    public JSONObject setPAcCPrem(BigDecimal fdbValue) {
+        return setValue("nPAcCPrem", fdbValue);
     }
 
     /**
      * @return The Value of this record.
      */
-    public BigDecimal getPacCPrem() {
-        if(getValue("nPacCPrem") == null || getValue("nPacCPrem").equals("")){
+    public BigDecimal getPAcCPrem() {
+        if(getValue("nPAcCPrem") == null || getValue("nPAcCPrem").equals("")){
             return new BigDecimal("0.00");
         } else {
-            return new BigDecimal(String.valueOf(getValue("nPacCPrem")));
+            return new BigDecimal(String.valueOf(getValue("nPAcCPrem")));
         }
     }
     
@@ -1415,5 +1419,52 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public String getInsurNme() {
         return (String) getValue("sInsurNme");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setDelvryDt(Date fdValue) {
+        JSONObject loJSON = new JSONObject();
+        return setValue("dDelvryDt", fdValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Date getDelvryDt() {
+        Date date = null;
+        if(getValue("dDelvryDt") == null || getValue("dDelvryDt").equals("")){
+            date = SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE);
+        } else {
+            date = SQLUtil.toDate(xsDateShort((Date) getValue("dDelvryDt")), SQLUtil.FORMAT_SHORT_DATE);
+        }
+            
+        return date;
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdbValue
+     * @return result as success/failed
+     */
+    public JSONObject setUnitPrce(BigDecimal fdbValue) {
+        return setValue("nUnitPrce", fdbValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public BigDecimal getUnitPrce() {
+        if(getValue("nUnitPrce") == null || getValue("nUnitPrce").equals("")){
+            return new BigDecimal("0.00");
+        } else {
+            return new BigDecimal(String.valueOf(getValue("nUnitPrce")));
+        }
+        //return Double.parseDouble(String.valueOf(getValue("nUnitPrce")));
     }
 }
