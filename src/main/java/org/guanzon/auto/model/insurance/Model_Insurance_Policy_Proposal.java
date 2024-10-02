@@ -32,7 +32,7 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -246,6 +246,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
 
         //replace with the primary key column info
         setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
+        setReferNo(MiscUtil.getNextCode(getTable(), "sReferNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
         setTransactDte(poGRider.getServerDate());
         
         poJSON = new JSONObject();
@@ -308,8 +309,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             if (pnEditMode == EditMode.ADDNEW) {
                 //replace with the primary key column info
                 setTransNo(MiscUtil.getNextCode(getTable(), "sTransNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
-                setEntryBy(poGRider.getUserID());
-                setEntryDte(poGRider.getServerDate());
+                setReferNo(MiscUtil.getNextCode(getTable(), "sReferNox", true, poGRider.getConnection(), poGRider.getBranchCode()));
                 setModifiedBy(poGRider.getUserID());
                 setModifiedDte(poGRider.getServerDate());
                 
@@ -489,7 +489,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , l.sBrInsNme "                                                                   
                 + "  , m.sInsurNme "                                                                
                 + "  , DATE(n.dDelvryDt) AS dDelvryDt"                                                                 
-                + "  , n.nUnitPrce "                                                                  
+                + "  , n.nUnitPrce "                                                             
+                + "  , o.sBankIDxx "                                                             
+                + "  , o.sBankname "                                                                 
                 + " FROM insurance_policy_proposal a "                                                 
                 + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
                 + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
@@ -503,7 +505,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + " LEFT JOIN client_master k ON k.sClientID = h.sCoCltIDx " /*co-owner*/              
                 + " LEFT JOIN insurance_company_branches l ON l.sBrInsIDx = a.sBrInsIDx "              
                 + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "             
-                + " LEFT JOIN vsp_master n ON n.sTransNox = a.sVSPNoxxx " ;                          
+                + " LEFT JOIN vsp_master n ON n.sTransNox = a.sVSPNoxxx "             
+                + " LEFT JOIN vsp_finance o ON o.sTransNox = a.sVSPNoxxx " ;                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -1466,5 +1469,39 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             return new BigDecimal(String.valueOf(getValue("nUnitPrce")));
         }
         //return Double.parseDouble(String.valueOf(getValue("nUnitPrce")));
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBankID(String fsValue) {
+        return setValue("sBankIDxx", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBankID() {
+        return (String) getValue("sBankIDxx");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBankname(String fsValue) {
+        return setValue("sBankname", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBankname() {
+        return (String) getValue("sBankname");
     }
 }

@@ -434,7 +434,7 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                     + "  ELSE 'ACTIVE' "                                                                                     
                     + "    END AS sTranStat "                                                                                
                      /*POLICY PROPOSAL*/                                                                                     
-                    + " , b.dTransact AS dPropslDt"                                                                                      
+                    + " , DATE(b.dTransact) AS dPropslDt"                                                                                      
                     + " , b.sReferNox AS sPropslNo "                                                                         
                     + " , b.sClientID "                                                                                      
                     + " , b.sSerialID "                                                                       
@@ -795,6 +795,49 @@ final String XML = "Model_Insurance_Policy_Application.xml";
      */
     public String getSerialID() {
         return (String) getValue("sSerialID");
+    }
+    
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setPropslNo(String fsValue) {
+        return setValue("sPropslNo", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getPropslNo() {
+        return (String) getValue("sPropslNo");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setPropslDt(Date fdValue) {
+        JSONObject loJSON = new JSONObject();
+        return setValue("dPropslDt", fdValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Date getPropslDt() {
+        Date date = null;
+        if(getValue("dPropslDt") == null || getValue("dPropslDt").equals("")){
+            date = SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE);
+        } else {
+            date = SQLUtil.toDate(xsDateShort((Date) getValue("dPropslDt")), SQLUtil.FORMAT_SHORT_DATE);
+        }
+            
+        return date;
     }
     
     /**
