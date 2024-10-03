@@ -32,7 +32,7 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname»sColorDsc»sVhclDesc"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -491,7 +491,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , DATE(n.dDelvryDt) AS dDelvryDt"                                                                 
                 + "  , n.nUnitPrce "                                                             
                 + "  , o.sBankIDxx "                                                             
-                + "  , o.sBankname "                                                                 
+                + "  , o.sBankname "    
+                + "  , TRIM(CONCAT_WS(' ',ja.sMakeDesc, jb.sModelDsc, jc.sTypeDesc, j.sTransMsn, j.nYearModl )) AS sVhclDesc "
+                + "  , jd.sColorDsc "                                                             
                 + " FROM insurance_policy_proposal a "                                                 
                 + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
                 + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
@@ -501,7 +503,11 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + " LEFT JOIN province g ON g.sProvIDxx = f.sProvIDxx  "                               
                 + " LEFT JOIN vehicle_serial h ON h.sSerialID = a.sSerialID "                          
                 + " LEFT JOIN vehicle_serial_registration i ON i.sSerialID = a.sSerialID "             
-                + " LEFT JOIN vehicle_master j ON j.sVhclIDxx = h.sVhclIDxx "                          
+                + " LEFT JOIN vehicle_master j ON j.sVhclIDxx = h.sVhclIDxx "       
+                + " LEFT JOIN vehicle_make ja ON ja.sMakeIDxx = j.sMakeIDxx  "
+                + " LEFT JOIN vehicle_model jb ON jb.sModelIDx = j.sModelIDx "
+                + " LEFT JOIN vehicle_type jc ON jc.sTypeIDxx = j.sTypeIDxx  "
+                + " LEFT JOIN vehicle_color jd ON jd.sColorIDx = j.sColorIDx "                   
                 + " LEFT JOIN client_master k ON k.sClientID = h.sCoCltIDx " /*co-owner*/              
                 + " LEFT JOIN insurance_company_branches l ON l.sBrInsIDx = a.sBrInsIDx "              
                 + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "             
@@ -1503,5 +1509,39 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public String getBankname() {
         return (String) getValue("sBankname");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setVhclDesc(String fsValue) {
+        return setValue("sVhclDesc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclDesc() {
+        return (String) getValue("sVhclDesc");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setColorDsc(String fsValue) {
+        return setValue("sColorDsc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getColorDsc() {
+        return (String) getValue("sColorDsc");
     }
 }
