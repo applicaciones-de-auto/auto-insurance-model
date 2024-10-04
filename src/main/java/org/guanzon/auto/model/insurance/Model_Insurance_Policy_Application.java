@@ -34,7 +34,7 @@ final String XML = "Model_Insurance_Policy_Application.xml";
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
                                 + "»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
                                 + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPacCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
-                                + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName"; //»
+                                + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName»sPolicyNo»sVhclDesc»sColorDsc"; //»
     
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -69,6 +69,23 @@ final String XML = "Model_Insurance_Policy_Application.xml";
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
             poEntity.updateObject("dValidFrm", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateObject("dValidTru", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+            poEntity.updateDouble("nODTCRate", 0.00);
+            poEntity.updateDouble("nAONCRate", 0.00);
+            poEntity.updateDouble("nTaxRatex", 0.00);
+            poEntity.updateBigDecimal("nODTCAmtx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nODTCPrem", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nAONCAmtx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nAONCPrem", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nBdyCAmtx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nBdyCPrem", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nPrDCAmtx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nPrDCPrem", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nPAcCAmtx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nPacCPrem", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nTPLAmtxx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nTPLPremx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nTaxAmtxx", new BigDecimal("0.00"));
+            poEntity.updateBigDecimal("nTotalAmt", new BigDecimal("0.00"));
 
             poEntity.insertRow();
             poEntity.moveToCurrentRow();
@@ -474,12 +491,15 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                     + " , i.sEngineNo "                                                                                      
                     + " , i.cVhclNewx "                                                                                      
                     + " , j.sPlateNox "                                                                                      
-                    + " , k.sDescript AS sVhclFDsc "                                                                         
+                    + " , k.sDescript AS sVhclFDsc "  
+                    + "  , TRIM(CONCAT_WS(' ',ka.sMakeDesc, kb.sModelDsc, kc.sTypeDesc, k.sTransMsn, k.nYearModl )) AS sVhclDesc "
+                    + "  , kd.sColorDsc "                                                                         
                     + " , m.sBrInsNme "                                                                                      
                     + " , n.sInsurNme "
                     + " , o.sCompnyNm AS sEmpNamex "
                     + " , p.sBrBankNm "
-                    + " , q.sBankName "                                                                                      
+                    + " , q.sBankName "    
+                    + " , r.sPolicyNo "                                                                                     
                     + " FROM insurance_policy_application a "                                                                 
                     + " LEFT JOIN insurance_policy_proposal b ON b.sTransNox = a.sReferNox "                                  
                     + " LEFT JOIN client_master c ON c.sClientID = b.sClientID "  /*owner*/                                   
@@ -490,13 +510,18 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                     + " LEFT JOIN province h ON h.sProvIDxx = g.sProvIDxx  "                                                  
                     + " LEFT JOIN vehicle_serial i ON i.sSerialID = b.sSerialID "                                             
                     + " LEFT JOIN vehicle_serial_registration j ON j.sSerialID = b.sSerialID "                                
-                    + " LEFT JOIN vehicle_master k ON k.sVhclIDxx = i.sVhclIDxx "                                             
+                    + " LEFT JOIN vehicle_master k ON k.sVhclIDxx = i.sVhclIDxx "     
+                    + " LEFT JOIN vehicle_make ka ON ka.sMakeIDxx = k.sMakeIDxx  "
+                    + " LEFT JOIN vehicle_model kb ON kb.sModelIDx = k.sModelIDx "
+                    + " LEFT JOIN vehicle_type kc ON kc.sTypeIDxx = k.sTypeIDxx  "
+                    + " LEFT JOIN vehicle_color kd ON kd.sColorIDx = k.sColorIDx "                                         
                     + " LEFT JOIN client_master l ON l.sClientID = i.sCoCltIDx  " /*co-owner*/                                
                     + " LEFT JOIN insurance_company_branches m ON m.sBrInsIDx = b.sBrInsIDx  "                                
                     + " LEFT JOIN insurance_company n ON n.sInsurIDx = m.sInsurIDx " 
                     + " LEFT JOIN ggc_isysdbf.client_master o ON o.sClientID = a.sEmployID " 
                     + " LEFT JOIN banks_branches p ON p.sBrBankID = a.sBrBankID  "                     
-                    + " LEFT JOIN banks q ON q.sBankIDxx = p.sBankIDxx " ;                          
+                    + " LEFT JOIN banks q ON q.sBankIDxx = p.sBankIDxx "                            
+                    + " LEFT JOIN insurance_policy r ON r.sReferNox = a.sTransNox AND r.cTranStat <> " + SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED);                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -1381,6 +1406,40 @@ final String XML = "Model_Insurance_Policy_Application.xml";
      * @param fsValue
      * @return result as success/failed
      */
+    public JSONObject setVhclDesc(String fsValue) {
+        return setValue("sVhclDesc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclDesc() {
+        return (String) getValue("sVhclDesc");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setColorDsc(String fsValue) {
+        return setValue("sColorDsc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getColorDsc() {
+        return (String) getValue("sColorDsc");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
     public JSONObject setCSNo(String fsValue) {
         return setValue("sCSNoxxxx", fsValue);
     }
@@ -1543,5 +1602,22 @@ final String XML = "Model_Insurance_Policy_Application.xml";
      */
     public String getBankName() {
         return (String) getValue("sBankName");
+    } 
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setPolicyNo(String fsValue) {
+        return setValue("sPolicyNo", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getPolicyNo() {
+        return (String) getValue("sPolicyNo");
     } 
 }
