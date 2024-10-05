@@ -527,7 +527,7 @@ final String XML = "Model_Insurance_Policy.xml";
                     + " , q.sBrBankNm "                                                                                   
                     + " , r.sBankName "                                                                                   
                     + " FROM insurance_policy a "                                                                         
-                    + " LEFT JOIN insurance_policy_application b  ON b.sTransNox = a.sReferNox "                          
+                    + " LEFT JOIN insurance_policy_application b  ON b.a.sTransNox = a.sReferNox "                          
                     + " LEFT JOIN insurance_policy_proposal c ON c.sTransNox = b.sReferNox "                              
                     + " LEFT JOIN client_master d ON d.sClientID = c.sClientID "  /*owner*/                               
                     + " LEFT JOIN client_address e ON e.sClientID = c.sClientID AND e.cPrimaryx = '1' "                   

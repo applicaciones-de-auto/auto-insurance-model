@@ -32,7 +32,7 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -489,7 +489,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , l.sBrInsNme "                                                                   
                 + "  , m.sInsurNme "                                                                
                 + "  , DATE(n.dDelvryDt) AS dDelvryDt"                                                                 
-                + "  , n.nUnitPrce "                                                             
+                + "  , n.nUnitPrce "                                                               
+                + "  , n.cPayModex "                                                           
                 + "  , o.sBankIDxx "                                                             
                 + "  , o.sBankname "    
                 + "  , TRIM(CONCAT_WS(' ',ja.sMakeDesc, jb.sModelDsc, jc.sTypeDesc, j.sTransMsn, j.nYearModl )) AS sVhclDesc "

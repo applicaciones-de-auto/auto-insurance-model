@@ -33,7 +33,7 @@ final String XML = "Model_Insurance_Policy_Application.xml";
     private String psBranchCd;
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
                                 + "»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
-                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPacCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
+                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPAcCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
                                 + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName»sPolicyNo»sVhclDesc»sColorDsc"; //»
     
     GRider poGRider;                //application driver
@@ -471,7 +471,7 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                     + " , b.nPrDCAmtx "                                                                                      
                     + " , b.nPrDCPrem "                                                                                      
                     + " , b.nPAcCAmtx "                                                                                      
-                    + " , b.nPacCPrem "                                                                                      
+                    + " , b.nPAcCPrem "                                                                                      
                     + " , b.nTPLAmtxx "                                                                                      
                     + " , b.nTPLPremx "                                                                                      
                     + " , b.nTaxRatex "                                                                                      
@@ -1198,18 +1198,18 @@ final String XML = "Model_Insurance_Policy_Application.xml";
      * @param fdbValue
      * @return result as success/failed
      */
-    public JSONObject setPacCPrem(BigDecimal fdbValue) {
-        return setValue("nPacCPrem", fdbValue);
+    public JSONObject setPAcCPrem(BigDecimal fdbValue) {
+        return setValue("nPAcCPrem", fdbValue);
     }
 
     /**
      * @return The Value of this record.
      */
-    public BigDecimal getPacCPrem() {
-        if(getValue("nPacCPrem") == null || getValue("nPacCPrem").equals("")){
+    public BigDecimal getPAcCPrem() {
+        if(getValue("nPAcCPrem") == null || getValue("nPAcCPrem").equals("")){
             return new BigDecimal("0.00");
         } else {
-            return new BigDecimal(String.valueOf(getValue("nPacCPrem")));
+            return new BigDecimal(String.valueOf(getValue("nPAcCPrem")));
         }
     }
     
