@@ -34,7 +34,7 @@ final String XML = "Model_Insurance_Policy_Application.xml";
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
                                 + "»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
                                 + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPAcCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
-                                + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName»sPolicyNo»sVhclDesc»sColorDsc"; //»
+                                + "»nTotalAmt»sEmpNamex»sBrBankNm»sBankName»sPolicyNo»sVhclDesc»sColorDsc»cVhclSize»sUnitType»sBodyType"; //»
     
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -493,6 +493,9 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                     + " , j.sPlateNox "                                                                                      
                     + " , k.sDescript AS sVhclFDsc "  
                     + "  , TRIM(CONCAT_WS(' ',ka.sMakeDesc, kb.sModelDsc, kc.sTypeDesc, k.sTransMsn, k.nYearModl )) AS sVhclDesc "
+                    + "  , k.cVhclSize "
+                    + "  , kb.sUnitType "
+                    + "  , kb.sBodyType "
                     + "  , kd.sColorDsc "                                                                         
                     + " , m.sBrInsNme "                                                                                      
                     + " , n.sInsurNme "
@@ -1416,6 +1419,57 @@ final String XML = "Model_Insurance_Policy_Application.xml";
     public String getVhclDesc() {
         return (String) getValue("sVhclDesc");
     }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return True if the record assignment is successful.
+     */
+    public JSONObject setVhclSize(String fsValue) {
+        return setValue("cVhclSize", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclSize() {
+        return (String) getValue("cVhclSize");
+    } 
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return True if the record assignment is successful.
+     */
+    public JSONObject setUnitType(String fsValue) {
+        return setValue("sUnitType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getUnitType() {
+        return (String) getValue("sUnitType");
+    } 
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return True if the record assignment is successful.
+     */
+    public JSONObject setBodyType(String fsValue) {
+        return setValue("sBodyType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBodyType() {
+        return (String) getValue("sBodyType");
+    } 
     
     /**
      * Description: Sets the Value of this record.

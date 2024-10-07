@@ -32,11 +32,11 @@ final String XML = "Model_Insurance_Policy.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
-                                + "»dApplicDt»sApplicNo»sEmployID»sProTrnNo»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx"
+                                + "»dApplicDt»sApplicNo»sEmployID»sProTrnNo»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nTaxRatex"
 //                                + "»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
-//                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPacCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
+//                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPAcCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
 //                                + "»nTotalAmt"
-                                + "»sEmpNamex»sBrBankNm»sBankName"; //»
+                                + "»sEmpNamex»sBrBankNm»sBankName»sVhclDesc»cVhclSize»sUnitType»sBodyType»sColorDsc"; //»
     
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -89,7 +89,7 @@ final String XML = "Model_Insurance_Policy.xml";
             poEntity.updateBigDecimal("nPrDCAmtx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nPrDCPrem", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nPAcCAmtx", new BigDecimal("0.00"));  
-            poEntity.updateBigDecimal("nPacCPrem", new BigDecimal("0.00"));  
+            poEntity.updateBigDecimal("nPAcCPrem", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nTPLAmtxx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nTPLPremx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nDiscAmtx", new BigDecimal("0.00"));  
@@ -467,7 +467,7 @@ final String XML = "Model_Insurance_Policy.xml";
                     + " , a.nPrDCAmtx "                                                                                   
                     + " , a.nPrDCPrem "                                                                                   
                     + " , a.nPAcCAmtx "                                                                                   
-                    + " , a.nPacCPrem "                                                                                   
+                    + " , a.nPAcCPrem "                                                                                   
                     + " , a.nTPLAmtxx "                                                                                   
                     + " , a.nTPLPremx "                                                                                   
                     + " , a.nDocRatex "                                                                                   
@@ -505,7 +505,8 @@ final String XML = "Model_Insurance_Policy.xml";
                     + " , c.sVSPNoxxx AS sVSPTrnNo "                                                                      
                     + " , c.sBrInsIDx "                                                                                   
                     + " , c.sInsTypID "                                                                                   
-                    + " , c.cIsNewxxx "                                                                                                 
+                    + " , c.cIsNewxxx "                                                                                   
+                    + " , c.nTaxRatex "                                                                                                
                     /*CLIENT INFO */                                                                                      
                     + " , d.sCompnyNm AS sOwnrNmxx "                                                                          
                     + " , d.cClientTp "                                                                                   
@@ -520,14 +521,19 @@ final String XML = "Model_Insurance_Policy.xml";
                     + " , j.sEngineNo "                                                                                   
                     + " , j.cVhclNewx "                                                                                   
                     + " , k.sPlateNox "                                                                                   
-                    + " , l.sDescript AS sVhclFDsc "                                                                      
+                    + " , l.sDescript AS sVhclFDsc "    
+                    + "  , TRIM(CONCAT_WS(' ',la.sMakeDesc, lb.sModelDsc, lc.sTypeDesc, l.sTransMsn, l.nYearModl )) AS sVhclDesc "
+                    + "  , l.cVhclSize "
+                    + "  , lb.sUnitType "
+                    + "  , lb.sBodyType "
+                    + "  , ld.sColorDsc "                                                                   
                     + " , n.sBrInsNme "                                                                                   
                     + " , o.sInsurNme "                                                                                   
                     + " , p.sCompnyNm AS sEmpNamex "                                                                      
                     + " , q.sBrBankNm "                                                                                   
                     + " , r.sBankName "                                                                                   
                     + " FROM insurance_policy a "                                                                         
-                    + " LEFT JOIN insurance_policy_application b  ON b.a.sTransNox = a.sReferNox "                          
+                    + " LEFT JOIN insurance_policy_application b  ON b.sTransNox = a.sReferNox "                          
                     + " LEFT JOIN insurance_policy_proposal c ON c.sTransNox = b.sReferNox "                              
                     + " LEFT JOIN client_master d ON d.sClientID = c.sClientID "  /*owner*/                               
                     + " LEFT JOIN client_address e ON e.sClientID = c.sClientID AND e.cPrimaryx = '1' "                   
@@ -537,7 +543,11 @@ final String XML = "Model_Insurance_Policy.xml";
                     + " LEFT JOIN province i ON i.sProvIDxx = h.sProvIDxx  "                                              
                     + " LEFT JOIN vehicle_serial j ON j.sSerialID = c.sSerialID "                                         
                     + " LEFT JOIN vehicle_serial_registration k ON k.sSerialID = c.sSerialID "                            
-                    + " LEFT JOIN vehicle_master l ON l.sVhclIDxx = j.sVhclIDxx "                                         
+                    + " LEFT JOIN vehicle_master l ON l.sVhclIDxx = j.sVhclIDxx "   
+                    + " LEFT JOIN vehicle_make la ON la.sMakeIDxx = l.sMakeIDxx  "
+                    + " LEFT JOIN vehicle_model lb ON lb.sModelIDx = l.sModelIDx "
+                    + " LEFT JOIN vehicle_type lc ON lc.sTypeIDxx = l.sTypeIDxx  "
+                    + " LEFT JOIN vehicle_color ld ON ld.sColorIDx = l.sColorIDx "                                      
                     + " LEFT JOIN client_master m ON m.sClientID = j.sCoCltIDx  " /*co-owner*/                            
                     + " LEFT JOIN insurance_company_branches n ON n.sBrInsIDx = c.sBrInsIDx "                             
                     + " LEFT JOIN insurance_company o ON o.sInsurIDx = n.sInsurIDx "                                      
@@ -988,18 +998,18 @@ final String XML = "Model_Insurance_Policy.xml";
      * @param fdbValue
      * @return result as success/failed
      */
-    public JSONObject setPacCPrem(BigDecimal fdbValue) {
-        return setValue("nPacCPrem", fdbValue);
+    public JSONObject setPAcCPrem(BigDecimal fdbValue) {
+        return setValue("nPAcCPrem", fdbValue);
     }
 
     /**
      * @return The Value of this record.
      */
-    public BigDecimal getPacCPrem() {
-        if(getValue("nPacCPrem") == null || getValue("nPacCPrem").equals("")){
+    public BigDecimal getPAcCPrem() {
+        if(getValue("nPAcCPrem") == null || getValue("nPAcCPrem").equals("")){
             return new BigDecimal("0.00");
         } else {
-            return new BigDecimal(String.valueOf(getValue("nPacCPrem")));
+            return new BigDecimal(String.valueOf(getValue("nPAcCPrem")));
         }
     }
     
@@ -1059,7 +1069,7 @@ final String XML = "Model_Insurance_Policy.xml";
      * @return The Value of this record.
      */
     public Double getDocRate() {
-        //return Integer.parseInt(String.valueOf(getValue("nTaxRatex")));
+        //return Integer.parseInt(String.valueOf(getValue("nDocRatex")));
         return Double.parseDouble(String.valueOf(getValue("nDocRatex")));
     }
     
@@ -1243,6 +1253,27 @@ final String XML = "Model_Insurance_Policy.xml";
             return new BigDecimal("0.00");
         } else {
             return new BigDecimal(String.valueOf(getValue("nNetTotal")));
+        }
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdbValue
+     * @return result as success/failed
+     */
+    public JSONObject setCommissn(BigDecimal fdbValue) {
+        return setValue("nCommissn", fdbValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public BigDecimal getCommissn() {
+        if(getValue("nCommissn") == null || getValue("nCommissn").equals("")){
+            return new BigDecimal("0.00");
+        } else {
+            return new BigDecimal(String.valueOf(getValue("nCommissn")));
         }
     }
     
@@ -1564,6 +1595,24 @@ final String XML = "Model_Insurance_Policy.xml";
     /**
      * Description: Sets the Value of this record.
      *
+     * @param fnValue
+     * @return result as success/failed
+     */
+    public JSONObject setTaxRate(Double fnValue) {
+        return setValue("nTaxRatex", fnValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Double getTaxRate() {
+        //return Integer.parseInt(String.valueOf(getValue("nTaxRatex")));
+        return Double.parseDouble(String.valueOf(getValue("nTaxRatex")));
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
      * @param fsValue
      * @return result as success/failed
      */
@@ -1644,6 +1693,91 @@ final String XML = "Model_Insurance_Policy.xml";
      */
     public String getVhclFDsc() {
         return (String) getValue("sVhclFDsc");
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setVhclDesc(String fsValue) {
+        return setValue("sVhclDesc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclDesc() {
+        return (String) getValue("sVhclDesc");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setVhclSize(String fsValue) {
+        return setValue("cVhclSize", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclSize() {
+        return (String) getValue("cVhclSize");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setUnitType(String fsValue) {
+        return setValue("sUnitType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getUnitType() {
+        return (String) getValue("sUnitType");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBodyType(String fsValue) {
+        return setValue("sBodyType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBodyType() {
+        return (String) getValue("sBodyType");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setColorDsc(String fsValue) {
+        return setValue("sColorDsc", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getColorDsc() {
+        return (String) getValue("sColorDsc");
     }
     
     /**

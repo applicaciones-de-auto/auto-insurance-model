@@ -32,7 +32,8 @@ public class Model_Insurance_Policy_Proposal implements GEntity{
 final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
-    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex"; //»
+    private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»"
+                            + "sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex»cVhclSize»sUnitType»sBodyType"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -494,6 +495,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , o.sBankIDxx "                                                             
                 + "  , o.sBankname "    
                 + "  , TRIM(CONCAT_WS(' ',ja.sMakeDesc, jb.sModelDsc, jc.sTypeDesc, j.sTransMsn, j.nYearModl )) AS sVhclDesc "
+                + "  , j.cVhclSize "
+                + "  , jb.sUnitType "
+                + "  , jb.sBodyType "
                 + "  , jd.sColorDsc "    
                 + "  , p.sTransNox AS sInsAppNo "                                                          
                 + " FROM insurance_policy_proposal a "                                                 
@@ -1529,6 +1533,57 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public String getVhclDesc() {
         return (String) getValue("sVhclDesc");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setVhclSize(String fsValue) {
+        return setValue("cVhclSize", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getVhclSize() {
+        return (String) getValue("cVhclSize");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setUnitType(String fsValue) {
+        return setValue("sUnitType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getUnitType() {
+        return (String) getValue("sUnitType");
+    }
+   
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setBodyType(String fsValue) {
+        return setValue("sBodyType", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getBodyType() {
+        return (String) getValue("sBodyType");
     }
    
     /**
