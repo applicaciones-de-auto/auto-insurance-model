@@ -32,7 +32,7 @@ final String XML = "Model_Insurance_Policy.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme"
-                                + "»dApplicDt»sApplicNo»sEmployID»sProTrnNo»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nTaxRatex"
+                                + "»dApplicDt»sEmployID»sProTrnNo»dPropslDt»sPropslNo»sClientID»sSerialID»sVSPTrnNo»sBrInsIDx»sInsTypID»cIsNewxxx»nTaxRatex"
 //                                + "»nODTCAmtx»nODTCRate»nODTCPrem»nAONCAmtx»nAONCRate"
 //                                + "»nAONCRate»nAONCPrem»cAONCPayM»nBdyCAmtx»nBdyCPrem»nPrDCAmtx»nPrDCPrem»nPAcCAmtx»nPAcCPrem»nTPLAmtxx»nTPLPremx»nTaxRatex»nTaxAmtxx"
 //                                + "»nTotalAmt"
@@ -71,19 +71,18 @@ final String XML = "Model_Insurance_Policy.xml";
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
             poEntity.updateObject("dValidFrm", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateObject("dValidTru", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+            poEntity.updateObject("dApplicDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);                        
             poEntity.updateDouble("nAONCRate", 0.00);                        
             poEntity.updateDouble("nVATRatex", 0.00);                        
             poEntity.updateDouble("nDocRatex", 0.00);                        
             poEntity.updateDouble("nLGUTaxRt", 0.00);                        
-            poEntity.updateBigDecimal("sMVFileNo", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nODTCAmtx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nAuthFeex", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nODTCPrem", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nAONCAmtx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nGrossAmt", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nAONCPrem", new BigDecimal("0.00"));  
-            poEntity.updateBigDecimal("cAONCPayM", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nBdyCAmtx", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nBdyCPrem", new BigDecimal("0.00"));  
             poEntity.updateBigDecimal("nPrDCAmtx", new BigDecimal("0.00"));  
@@ -494,8 +493,7 @@ final String XML = "Model_Insurance_Policy.xml";
                     + "  ELSE 'ACTIVE' "                                                                                  
                     + "    END AS sTranStat "                                                                             
                     /*POLICY APPLICATION */                                                                               
-                    + " , b.dTransact AS dApplicDt "                                                                      
-                    + " , b.sReferNox AS sApplicNo "                                                                    
+                    + " , DATE(b.dTransact) AS dApplicDt "                                                                         
                     + " , b.sEmployID "  
                     /*POLICY PROPOSAL*/                                                                                   
                     + " , c.dTransact AS dPropslDt "                                                                      
@@ -1401,23 +1399,23 @@ final String XML = "Model_Insurance_Policy.xml";
 //    }
     
     /*POLICY APPLICATION*/
-    
-    /**
-     * Description: Sets the ID of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setApplicNo(String fsValue) {
-        return setValue("sApplicNo", fsValue);
-    }
-
-    /**
-     * @return The ID of this record.
-     */
-    public String getApplicNo() {
-        return (String) getValue("sApplicNo");
-    }
+//    
+//    /**
+//     * Description: Sets the ID of this record.
+//     *
+//     * @param fsValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setApplicNo(String fsValue) {
+//        return setValue("sApplicNo", fsValue);
+//    }
+//
+//    /**
+//     * @return The ID of this record.
+//     */
+//    public String getApplicNo() {
+//        return (String) getValue("sApplicNo");
+//    }
     
     
     /**
