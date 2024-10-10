@@ -207,7 +207,7 @@ final String XML = "Model_Insurance_Policy.xml";
     @Override
     public JSONObject setValue(int fnColumn, Object foValue) {
         try {
-            System.out.println("SET : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) );
+//            System.out.println("SET : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) );
             poJSON = MiscUtil.validateColumnValue(System.getProperty("sys.default.path.metadata") + XML, MiscUtil.getColumnLabel(poEntity, fnColumn), foValue);
             if ("error".equals((String) poJSON.get("result"))) {
                 System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
@@ -508,11 +508,11 @@ final String XML = "Model_Insurance_Policy.xml";
                     /*CLIENT INFO */                                                                                      
                     + " , d.sCompnyNm AS sOwnrNmxx "                                                                          
                     + " , d.cClientTp "                                                                                   
-                    + " , IFNULL(CONCAT( IFNULL(CONCAT(f.sHouseNox,' ') , ''), "                                          
+                    + " , TRIM(IFNULL(CONCAT( IFNULL(CONCAT(f.sHouseNox,' ') , ''), "                                          
                     + "   IFNULL(CONCAT(f.sAddressx,' ') , ''), "                                                         
                     + "   IFNULL(CONCAT(g.sBrgyName,' '), ''),  "                                                         
                     + "   IFNULL(CONCAT(h.sTownName, ', '),''), "                                                         
-                    + "   IFNULL(CONCAT(i.sProvName),'') )	, '') AS sAddressx "                                          
+                    + "   IFNULL(CONCAT(i.sProvName),'') )	, '')) AS sAddressx "                                          
                     + " , m.sCompnyNm AS sCoOwnrNm  "                                                                     
                     + " , j.sCSNoxxxx "                                                                                   
                     + " , j.sFrameNox "                                                                                   

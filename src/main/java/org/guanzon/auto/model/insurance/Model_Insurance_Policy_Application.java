@@ -480,11 +480,11 @@ final String XML = "Model_Insurance_Policy_Application.xml";
                      /*CLIENT INFO */                                                                                        
                     + " , c.sCompnyNm AS sOwnrNmxx "                                                                         
                     + " , c.cClientTp "                                                                                      
-                    + " , IFNULL(CONCAT( IFNULL(CONCAT(e.sHouseNox,' ') , ''), "                                             
+                    + " , TRIM(IFNULL(CONCAT( IFNULL(CONCAT(e.sHouseNox,' ') , ''), "                                             
                     + "   IFNULL(CONCAT(e.sAddressx,' ') , ''),  "                                                           
                     + "   IFNULL(CONCAT(f.sBrgyName,' '), ''),   "                                                           
                     + "   IFNULL(CONCAT(g.sTownName, ', '),''),  "                                                           
-                    + "   IFNULL(CONCAT(h.sProvName),'') )	, '') AS sAddressx "                                             
+                    + "   IFNULL(CONCAT(h.sProvName),'') ), '')) AS sAddressx "                                             
                     + " , l.sCompnyNm AS sCoOwnrNm "                                                                         
                     + " , i.sCSNoxxxx "                                                                                      
                     + " , i.sFrameNox "                                                                                      

@@ -194,9 +194,10 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     @Override
     public JSONObject setValue(int fnColumn, Object foValue) {
         try {
-            System.out.println(MiscUtil.getColumnLabel(poEntity, fnColumn));
+//            System.out.println(MiscUtil.getColumnLabel(poEntity, fnColumn));
             poJSON = MiscUtil.validateColumnValue(System.getProperty("sys.default.path.metadata") + XML, MiscUtil.getColumnLabel(poEntity, fnColumn), foValue);
             if ("error".equals((String) poJSON.get("result"))) {
+                System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
                 return poJSON;
             }
 
@@ -475,11 +476,11 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "    END AS sTranStat "
                 + "  , b.sCompnyNm AS sOwnrNmxx "                                                      
                 + "  , b.cClientTp "                                                                   
-                + "  , IFNULL(CONCAT( IFNULL(CONCAT(d.sHouseNox,' ') , ''), "                          
+                + "  , TRIM(IFNULL(CONCAT( IFNULL(CONCAT(d.sHouseNox,' ') , ''), "                          
                 + "    IFNULL(CONCAT(d.sAddressx,' ') , ''), "                                         
                 + "    IFNULL(CONCAT(e.sBrgyName,' '), ''),  "                                         
                 + "    IFNULL(CONCAT(f.sTownName, ', '),''), "                                         
-                + "    IFNULL(CONCAT(g.sProvName),'') )	, '') AS sAddressx "                           
+                + "    IFNULL(CONCAT(g.sProvName),'') )	, '')) AS sAddressx "                           
                 + "  , k.sCompnyNm AS sCoOwnrNm "                                                      
                 + "  , h.sCSNoxxxx "                                                                   
                 + "  , h.sFrameNox "                                                                   
