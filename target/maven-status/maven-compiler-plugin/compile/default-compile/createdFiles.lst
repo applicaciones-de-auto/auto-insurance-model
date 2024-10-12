@@ -1,1 +1,3 @@
 org\guanzon\auto\model\insurance\Model_Insurance_Policy_Proposal.class
+org\guanzon\auto\model\insurance\Model_Insurance_Policy_Application.class
+org\guanzon\auto\model\insurance\Model_Insurance_Policy.class
