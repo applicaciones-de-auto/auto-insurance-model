@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.sql.rowset.CachedRowSet;
+import org.guanzon.appdriver.base.CommonUtils;
 import org.guanzon.appdriver.base.GRider;
 import org.guanzon.appdriver.base.MiscUtil;
 import org.guanzon.appdriver.base.SQLUtil;
@@ -33,7 +34,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»"
-                            + "sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex»cVhclSize»sUnitType»sBodyType"; //»
+                            + "sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex»cVhclSize»sUnitType»sBodyType»dApprovex»sApprover"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -500,7 +501,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , jb.sUnitType "
                 + "  , jb.sBodyType "
                 + "  , jd.sColorDsc "    
-                + "  , p.sTransNox AS sInsAppNo "                                                          
+                + "  , p.sTransNox AS sInsAppNo "                                                                                   
+                + " , DATE(q.dApproved) AS dApprovex "                                                                           
+                + " , r.sCompnyNm AS sApprover "                                                         
                 + " FROM insurance_policy_proposal a "                                                 
                 + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
                 + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
@@ -520,7 +523,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "             
                 + " LEFT JOIN vsp_master n ON n.sTransNox = a.sVSPNoxxx "             
                 + " LEFT JOIN vsp_finance o ON o.sTransNox = a.sVSPNoxxx "            
-                + " LEFT JOIN insurance_policy_application p ON p.sReferNox = a.sTransNox AND p.cTranStat <> " + SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED);                          
+                + " LEFT JOIN insurance_policy_application p ON p.sReferNox = a.sTransNox AND p.cTranStat <> " + SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)
+                + " LEFT JOIN transaction_status_history q ON q.sSourceNo = a.sTransNox AND q.cTranStat <> "+ SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)
+                + " LEFT JOIN ggc_isysdbf.client_master r ON r.sClientID = q.sApproved " ;                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -1620,4 +1625,44 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     public String getInsAppNo() {
         return (String) getValue("sInsAppNo");
     }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setApproveDte(Date fdValue) {
+        return setValue("dApprovex", fdValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Date getApproveDte() {
+        Date date = null;
+        if(!getValue("dApprovex").toString().isEmpty()){
+            date = CommonUtils.toDate(getValue("dApprovex").toString());
+        }
+        
+        return date;
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setApprover(String fsValue) {
+        return setValue("sApprover", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getApprover() {
+        return (String) getValue("sApprover");
+    }
+    
 }
