@@ -69,6 +69,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             poEntity.updateObject("dDelvryDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE)); 
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
             poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+            poEntity.updateObject("dApprovex", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);
             poEntity.updateDouble("nAONCRate", 0.00);
             poEntity.updateDouble("nTaxRatex", 0.00);
@@ -198,7 +199,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
 //            System.out.println(MiscUtil.getColumnLabel(poEntity, fnColumn));
             poJSON = MiscUtil.validateColumnValue(System.getProperty("sys.default.path.metadata") + XML, MiscUtil.getColumnLabel(poEntity, fnColumn), foValue);
             if ("error".equals((String) poJSON.get("result"))) {
-                System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
+                if(foValue != null){ //for checking only
+                    System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
+                }
                 return poJSON;
             }
 
@@ -1450,7 +1453,6 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      * @return result as success/failed
      */
     public JSONObject setDelvryDt(Date fdValue) {
-        JSONObject loJSON = new JSONObject();
         return setValue("dDelvryDt", fdValue);
     }
 
@@ -1641,10 +1643,12 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      */
     public Date getApproveDte() {
         Date date = null;
-        if(!getValue("dApprovex").toString().isEmpty()){
-            date = CommonUtils.toDate(getValue("dApprovex").toString());
+        if(getValue("dApprovex") == null || getValue("dApprovex").equals("")){
+            date = SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE);
+        } else {
+            date = SQLUtil.toDate(xsDateShort((Date) getValue("dApprovex")), SQLUtil.FORMAT_SHORT_DATE);
         }
-        
+            
         return date;
     }
     
