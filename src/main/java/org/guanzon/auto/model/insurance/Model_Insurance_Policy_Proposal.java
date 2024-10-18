@@ -68,7 +68,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             poEntity.updateObject("dTransact", poGRider.getServerDate()); 
             poEntity.updateObject("dDelvryDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE)); 
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
-            poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+//            poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateObject("dApprovex", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);
             poEntity.updateDouble("nAONCRate", 0.00);
@@ -469,8 +469,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , a.cTranStat "                                                                   
                 + "  , a.sModified "                                                                   
                 + "  , a.dModified "                                                                   
-                + "  , a.sApproved "                                                                   
-                + "  , a.dApproved "  
+//                + "  , a.sApproved "                                                                   
+//                + "  , a.dApproved "  
                 + "  , CASE "          
                 + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CLOSED)+" THEN 'APPROVE' "                     
                 + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)+" THEN 'CANCELLED' "                  
@@ -1208,39 +1208,39 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     }
     
     
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedBy(String fsValue) {
-        return setValue("sApproved", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getApprovedBy() {
-        return (String) getValue("sApproved");
-    }
-    
-    /**
-     * Sets the date and time the record was modified.
-     *
-     * @param fdValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedDte(Date fdValue) {
-        return setValue("dApproved", fdValue);
-    }
-
-    /**
-     * @return The date and time the record was modified.
-     */
-    public Date getApprovedDte() {
-        return (Date) getValue("dApproved");
-    }
+//    /**
+//     * Description: Sets the Value of this record.
+//     *
+//     * @param fsValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setApprovedBy(String fsValue) {
+//        return setValue("sApproved", fsValue);
+//    }
+//
+//    /**
+//     * @return The Value of this record.
+//     */
+//    public String getApprovedBy() {
+//        return (String) getValue("sApproved");
+//    }
+//    
+//    /**
+//     * Sets the date and time the record was modified.
+//     *
+//     * @param fdValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setApprovedDte(Date fdValue) {
+//        return setValue("dApproved", fdValue);
+//    }
+//
+//    /**
+//     * @return The date and time the record was modified.
+//     */
+//    public Date getApprovedDte() {
+//        return (Date) getValue("dApproved");
+//    }
     
     /**
      * Description: Sets the Value of this record.
