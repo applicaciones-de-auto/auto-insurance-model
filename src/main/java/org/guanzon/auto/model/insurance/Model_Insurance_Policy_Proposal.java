@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import javax.sql.rowset.CachedRowSet;
+import org.guanzon.appdriver.base.CommonUtils;
 import org.guanzon.appdriver.base.GRider;
 import org.guanzon.appdriver.base.MiscUtil;
 import org.guanzon.appdriver.base.SQLUtil;
@@ -33,7 +34,7 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     private final String psDefaultDate = "1900-01-01";
     private String psBranchCd;
     private String psExclude = "sTranStat»sOwnrNmxx»cClientTp»sAddressx»sCoOwnrNm»sCSNoxxxx»sFrameNox»sEngineNo»cVhclNewx»sPlateNox»sVhclFDsc»sBrInsNme»sInsurNme»dDelvryDt»nUnitPrce»"
-                            + "sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex»cVhclSize»sUnitType»sBodyType"; //»
+                            + "sBankIDxx»sBankname»sColorDsc»sVhclDesc»sInsAppNo»cPayModex»cVhclSize»sUnitType»sBodyType»dApprovex»sApprover"; //»
 
     GRider poGRider;                //application driver
     CachedRowSet poEntity;          //rowset
@@ -67,7 +68,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
             poEntity.updateObject("dTransact", poGRider.getServerDate()); 
             poEntity.updateObject("dDelvryDt", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE)); 
             poEntity.updateString("cTranStat", TransactionStatus.STATE_OPEN); 
-            poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+//            poEntity.updateObject("dApproved", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
+            poEntity.updateObject("dApprovex", SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE));
             poEntity.updateDouble("nODTCRate", 0.00);
             poEntity.updateDouble("nAONCRate", 0.00);
             poEntity.updateDouble("nTaxRatex", 0.00);
@@ -197,7 +199,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
 //            System.out.println(MiscUtil.getColumnLabel(poEntity, fnColumn));
             poJSON = MiscUtil.validateColumnValue(System.getProperty("sys.default.path.metadata") + XML, MiscUtil.getColumnLabel(poEntity, fnColumn), foValue);
             if ("error".equals((String) poJSON.get("result"))) {
-                System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
+                if(foValue != null){ //for checking only
+                    System.out.println("ERROR : "+ MiscUtil.getColumnLabel(poEntity, fnColumn) + " : "+  poJSON.get("message"));
+                }
                 return poJSON;
             }
 
@@ -465,8 +469,8 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , a.cTranStat "                                                                   
                 + "  , a.sModified "                                                                   
                 + "  , a.dModified "                                                                   
-                + "  , a.sApproved "                                                                   
-                + "  , a.dApproved "  
+//                + "  , a.sApproved "                                                                   
+//                + "  , a.dApproved "  
                 + "  , CASE "          
                 + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CLOSED)+" THEN 'APPROVE' "                     
                 + " 	WHEN a.cTranStat = "+SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)+" THEN 'CANCELLED' "                  
@@ -500,7 +504,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + "  , jb.sUnitType "
                 + "  , jb.sBodyType "
                 + "  , jd.sColorDsc "    
-                + "  , p.sTransNox AS sInsAppNo "                                                          
+                + "  , p.sTransNox AS sInsAppNo "                                                                                   
+                + " , DATE(q.dApproved) AS dApprovex "                                                                           
+                + " , r.sCompnyNm AS sApprover "                                                         
                 + " FROM insurance_policy_proposal a "                                                 
                 + " LEFT JOIN client_master b ON b.sClientID = a.sClientID "  /*owner*/                
                 + " LEFT JOIN client_address c ON c.sClientID = a.sClientID AND c.cPrimaryx = '1' "    
@@ -520,7 +526,9 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
                 + " LEFT JOIN insurance_company m ON m.sInsurIDx = l.sInsurIDx "             
                 + " LEFT JOIN vsp_master n ON n.sTransNox = a.sVSPNoxxx "             
                 + " LEFT JOIN vsp_finance o ON o.sTransNox = a.sVSPNoxxx "            
-                + " LEFT JOIN insurance_policy_application p ON p.sReferNox = a.sTransNox AND p.cTranStat <> " + SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED);                          
+                + " LEFT JOIN insurance_policy_application p ON p.sReferNox = a.sTransNox AND p.cTranStat <> " + SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)
+                + " LEFT JOIN transaction_status_history q ON q.sSourceNo = a.sTransNox AND q.cTranStat <> "+ SQLUtil.toSQL(TransactionStatus.STATE_CANCELLED)
+                + " LEFT JOIN ggc_isysdbf.client_master r ON r.sClientID = q.sApproved " ;                          
     }
     
     private static String xsDateShort(Date fdValue) {
@@ -1200,39 +1208,39 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     }
     
     
-    /**
-     * Description: Sets the Value of this record.
-     *
-     * @param fsValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedBy(String fsValue) {
-        return setValue("sApproved", fsValue);
-    }
-
-    /**
-     * @return The Value of this record.
-     */
-    public String getApprovedBy() {
-        return (String) getValue("sApproved");
-    }
-    
-    /**
-     * Sets the date and time the record was modified.
-     *
-     * @param fdValue
-     * @return result as success/failed
-     */
-    public JSONObject setApprovedDte(Date fdValue) {
-        return setValue("dApproved", fdValue);
-    }
-
-    /**
-     * @return The date and time the record was modified.
-     */
-    public Date getApprovedDte() {
-        return (Date) getValue("dApproved");
-    }
+//    /**
+//     * Description: Sets the Value of this record.
+//     *
+//     * @param fsValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setApprovedBy(String fsValue) {
+//        return setValue("sApproved", fsValue);
+//    }
+//
+//    /**
+//     * @return The Value of this record.
+//     */
+//    public String getApprovedBy() {
+//        return (String) getValue("sApproved");
+//    }
+//    
+//    /**
+//     * Sets the date and time the record was modified.
+//     *
+//     * @param fdValue
+//     * @return result as success/failed
+//     */
+//    public JSONObject setApprovedDte(Date fdValue) {
+//        return setValue("dApproved", fdValue);
+//    }
+//
+//    /**
+//     * @return The date and time the record was modified.
+//     */
+//    public Date getApprovedDte() {
+//        return (Date) getValue("dApproved");
+//    }
     
     /**
      * Description: Sets the Value of this record.
@@ -1445,7 +1453,6 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
      * @return result as success/failed
      */
     public JSONObject setDelvryDt(Date fdValue) {
-        JSONObject loJSON = new JSONObject();
         return setValue("dDelvryDt", fdValue);
     }
 
@@ -1620,4 +1627,46 @@ final String XML = "Model_Insurance_Policy_Proposal.xml";
     public String getInsAppNo() {
         return (String) getValue("sInsAppNo");
     }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fdValue
+     * @return result as success/failed
+     */
+    public JSONObject setApproveDte(Date fdValue) {
+        return setValue("dApprovex", fdValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public Date getApproveDte() {
+        Date date = null;
+        if(getValue("dApprovex") == null || getValue("dApprovex").equals("")){
+            date = SQLUtil.toDate(psDefaultDate, SQLUtil.FORMAT_SHORT_DATE);
+        } else {
+            date = SQLUtil.toDate(xsDateShort((Date) getValue("dApprovex")), SQLUtil.FORMAT_SHORT_DATE);
+        }
+            
+        return date;
+    }
+    
+    /**
+     * Description: Sets the Value of this record.
+     *
+     * @param fsValue
+     * @return result as success/failed
+     */
+    public JSONObject setApprover(String fsValue) {
+        return setValue("sApprover", fsValue);
+    }
+
+    /**
+     * @return The Value of this record.
+     */
+    public String getApprover() {
+        return (String) getValue("sApprover");
+    }
+    
 }
